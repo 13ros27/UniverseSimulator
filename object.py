@@ -153,3 +153,39 @@ class Point:
         self.update()
         self.step_vel(timestep=timestep)
         self.step_pos(timestep=timestep)
+
+
+class Photon(Point):
+    """A point with 0 mass."""
+
+    def __init__(self, pos, vel, space):
+        """
+        Create the point with its initial attributes.
+
+            - mass:  int (kg)
+            - pos:   Vector (m)
+            - vel:   Vector (m)
+            - space: Space
+        """
+        self.mass = 0
+        self.pos = pos
+        self.vel = vel
+        self.space = space
+        space.add(self)
+
+    def __repr__(self):
+        """Return information about the point."""
+        return f'Photon(mass={self.mass}, pos={self.pos}, vel={self.vel})'
+
+    def step(self, timestep=TIMESTEP):
+        """Step the point forward one timestep."""
+        self.step_pos(timestep=timestep)
+
+
+s = Space()
+bh = Point(float('Inf'), Vector(0, 0, 0), Vector(0, 0, 0), s)
+photon = Photon(Vector(5000, 5000, 5000), Vector(30000000, 0, 0), s)
+for i in range(1000):
+    s.step()
+print(bh)
+print(photon)
