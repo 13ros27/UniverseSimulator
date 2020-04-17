@@ -1,6 +1,34 @@
 """The classes to hold information about items in space and space itself."""
-
 TIMESTEP = 0.01
+
+
+class Vector:
+    """A 3-dimensional vector."""
+
+    def __init__(self, x, y, z):
+        """Create the vector with x, y and z."""
+        self.x = x
+        self.y = y
+        self.z = z
+
+    def __repr__(self):
+        """Return the vector in a neat form for outputting."""
+        return f'Vector({self.x}, {self.y}, {self.z})'
+
+    def __add__(self, other):
+        """Add two vectors together."""
+        self.x += other.x
+        self.y += other.y
+        self.z += other.z
+
+    def __mul__(self, other):
+        """Multiply a vector by a number."""
+        if isinstance(other, (int, float)):
+            self.x *= other
+            self.y *= other
+            self.z *= other
+        else:
+            raise TypeError('Can only multiply a vector by a number')
 
 
 class Point:
