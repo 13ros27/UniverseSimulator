@@ -1,8 +1,9 @@
 """The classes to hold information about items in space and space itself."""
 import math
+from copy import deepcopy
 
 # Constants
-TIMESTEP = 0.001
+TIMESTEP = 0.0001
 G = 0.00000000006743
 
 
@@ -34,7 +35,7 @@ class Vector:
         else:
             raise TypeError('Can only multiply a vector by a number')
 
-    def __div__(self, other):
+    def __truediv__(self, other):
         """Divide a vector by a number."""
         if isinstance(other, (int, float)):
             return Vector(self.x/other, self.y/other, self.z/other)
@@ -50,6 +51,7 @@ class Vector:
 
     @property
     def sum(self):
+        """Get the sum of the vector parts."""
         return self.x + self.y + self.z
 
     def dist(self, other):
@@ -63,49 +65,45 @@ class Space:
     def __init__(self):
         """Create a blank list of objects."""
         self.objs = []
-        self.lock_objects = None
+        self.new_objects = []
+        self.time = 0
 
     def add(self, obj):
         """Add an object to the space."""
+        if self.new_objects != []:
+            self.unlock()
         self.objs.append(obj)
-        self.lock_objects = None
-
-    @staticmethod
-    def _get_attrs(obj):
-        return {'mass': obj.mass, 'pos': obj.pos}
-
-    def _objects(self):
-        objects = []
-        for obj in self.objs:
-            objects.append(self._get_attrs(obj))
-        return objects
 
     def objects(self, cur_obj=None):
         """Return the mass and position of all objects except the given one."""
-        if self.lock_objects is not None:
-            objects = self.lock_objects
-        else:
-            objects = self._objects()
+        if cur_obj is None:
+            return self.objs
         ret = []
-        for obj in objects:
-            if obj != self._get_attrs(cur_obj):
+        for obj in self.objs:
+            if obj != cur_obj:
                 ret.append(obj)
         return ret
 
     def unlock(self):
         """Unlocks all objects in this space."""
-        self.lock_objects = None
+        for i in range(len(self.objs)):
+            self.objs[i].mass = self.new_objects[i].mass
+            self.objs[i].pos = self.new_objects[i].pos
+            self.objs[i].vel = self.new_objects[i].vel
 
     def lock(self):
         """Lock all objects in this space."""
-        self.lock_objects = self.objects()
+        self.new_objects = []
+        for obj in self.objs:
+            self.new_objects.append(deepcopy(obj))
 
     def step(self, timestep=TIMESTEP):
         """Step all objects in this space while locking their positions."""
         self.lock()
-        for obj in self.lock_objects:
+        for obj in self.new_objects:
             obj.step(timestep=timestep)
         self.unlock()
+        self.time += timestep
 
 
 class Point:
@@ -129,24 +127,39 @@ class Point:
 
     def __repr__(self):
         """Return information about the point."""
-        return (f'Point(mass={self.mass}, pos={self.pos}, vel={self.vel},'
-                'acc={self.acc})')
+        return f'Point(mass={self.mass}, pos={self.pos}, vel={self.vel})'
 
     def step_pos(self, timestep=TIMESTEP):
         """Step the position forward according to the points velocity."""
-        self.pos = self.pos + self.vel*timestep
+        self.pos += self.vel*timestep
 
     def step_vel(self, timestep=TIMESTEP):
         """Step the velocity forward according to the points acceleration."""
-        self.vel = self.vel + self.acc*timestep
+        self.vel += self.acc*timestep
 
     def update(self):
         """Update the acceleration according to the objects around it."""
         objects = self.space.objects(cur_obj=self)
-        
+        force = Vector(0, 0, 0)
+        for obj in objects:
+            dist = self.pos.dist(obj.pos)
+            sc_force = G*(self.mass*obj.mass)/(dist**2)
+            direction = (obj.pos-self.pos)/dist
+            force += direction*sc_force
+        self.acc = force / self.mass
 
     def step(self, timestep=TIMESTEP):
         """Step the point forward one timestep."""
         self.update()
         self.step_vel(timestep=timestep)
         self.step_pos(timestep=timestep)
+
+
+s = Space()
+p1 = Point(80, Vector(6371000, 0, 0), Vector(0, 0, 0), s)
+p2 = Point(5.972e24, Vector(0, 0, 0), Vector(0, 0, 0), s)
+for i in range(10000):
+    s.step()
+print(p1)
+print(p2)
+print(s.time)
