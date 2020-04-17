@@ -41,18 +41,22 @@ class Space:
 
     def __init__(self):
         """Create a blank list of objects."""
-        self.objects = []
+        self.objs = []
         self.lock_objects = None
 
-    def add(self, object):
+    def add(self, obj):
         """Add an object to the space."""
-        self.objects.append(object)
+        self.objs.append(obj)
         self.lock_objects = None
+
+    @staticmethod
+    def _get_attrs(obj):
+        return {'mass': obj.mass, 'pos': obj.pos}
 
     def _objects(self):
         objects = []
-        for obj in self.objects:
-            objects.append({'mass': obj.mass, 'pos': obj.pos})
+        for obj in self.objs:
+            objects.append(self._get_attrs(obj))
         return objects
 
     def objects(self, cur_obj=None):
@@ -63,7 +67,7 @@ class Space:
             objects = self._objects()
         ret = []
         for obj in objects:
-            if obj != cur_obj:
+            if obj != self._get_attrs(cur_obj):
                 ret.append(obj)
         return ret
 
