@@ -156,7 +156,7 @@ class Point:
 
 
 s = Space()
-p1 = Point(80, Vector(6371000, 0, 0), Vector(0, 0, 0), s)
+p1 = Point(80, Vector(6.371e6, 0, 0), Vector(0, 0, 0), s)
 p2 = Point(5.972e24, Vector(0, 0, 0), Vector(0, 0, 0), s)
 for i in range(10000):
     s.step()
