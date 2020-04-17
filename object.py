@@ -1,5 +1,8 @@
 """The classes to hold information about items in space and space itself."""
-TIMESTEP = 0.01
+
+# Constants
+TIMESTEP = 0.001
+G = 0.00000000006743
 
 
 class Vector:
