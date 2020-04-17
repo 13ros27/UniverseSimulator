@@ -153,13 +153,3 @@ class Point:
         self.update()
         self.step_vel(timestep=timestep)
         self.step_pos(timestep=timestep)
-
-
-s = Space()
-p1 = Point(80, Vector(6.371e6, 0, 0), Vector(0, 0, 0), s)
-p2 = Point(5.972e24, Vector(0, 0, 0), Vector(0, 0, 0), s)
-for i in range(10000):
-    s.step()
-print(p1)
-print(p2)
-print(s.time)
