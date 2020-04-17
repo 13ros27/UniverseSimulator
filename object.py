@@ -64,16 +64,20 @@ class Space:
                 ret.append(obj)
         return ret
 
-    def update(self):
-        """Update what space returns for the objects stored in it."""
+    def unlock(self):
+        """Unlocks all objects in this space."""
         self.lock_objects = None
+
+    def lock(self):
+        """Lock all objects in this space."""
+        self.lock_objects = self.objects()
 
     def step(self):
         """Step all objects in this space while locking their positions."""
-        self.lock_objects = self.objects()
+        self.lock()
         for obj in self.lock_objects:
             obj.step()
-        self.update()
+        self.unlock()
 
 
 class Point:
