@@ -46,6 +46,10 @@ class Point:
         self.pos = pos
         self.vel = vel
 
+    def __repr__(self):
+        """Return information about the point."""
+        return f'Point(mass={self.mass}, pos={self.pos}, vel={self.vel})'
+
     def step_pos(self, timestep=TIMESTEP):
         """Step the position forward according to the points velocity."""
         self.pos = self.pos + self.vel*TIMESTEP
