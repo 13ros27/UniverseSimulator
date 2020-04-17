@@ -1,4 +1,5 @@
 """The classes to hold information about items in space and space itself."""
+import math
 
 # Constants
 TIMESTEP = 0.001
@@ -20,20 +21,40 @@ class Vector:
 
     def __add__(self, other):
         """Add two vectors together."""
-        self.x += other.x
-        self.y += other.y
-        self.z += other.z
-        return self
+        return Vector(self.x+other.x, self.y+other.y, self.z+other.z)
+
+    def __sub__(self, other):
+        """Subtract a vector from this."""
+        return Vector(self.x-other.x, self.y-other.y, self.z-other.z)
 
     def __mul__(self, other):
         """Multiply a vector by a number."""
         if isinstance(other, (int, float)):
-            self.x *= other
-            self.y *= other
-            self.z *= other
+            return Vector(self.x*other, self.y*other, self.z*other)
         else:
             raise TypeError('Can only multiply a vector by a number')
-        return self
+
+    def __div__(self, other):
+        """Divide a vector by a number."""
+        if isinstance(other, (int, float)):
+            return Vector(self.x/other, self.y/other, self.z/other)
+        else:
+            raise TypeError('Can only multiply a vector by a number')
+
+    def __pow__(self, other):
+        """Raise each element of this vector to a power."""
+        if isinstance(other, (int, float)):
+            return Vector(self.x**other, self.y**other, self.z**other)
+        else:
+            raise TypeError('Can only multiply a vector by a number')
+
+    @property
+    def sum(self):
+        return self.x + self.y + self.z
+
+    def dist(self, other):
+        """Distance between this vector and another."""
+        return math.sqrt(((self-other)**2).sum)
 
 
 class Space:
