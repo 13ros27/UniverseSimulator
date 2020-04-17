@@ -7,7 +7,13 @@ class Point:
     """A point in space with mass."""
 
     def __init__(self, mass, pos, vel):
-        """Create the point with its initial attributes."""
+        """
+        Create the point with its initial attributes.
+
+            - mass: int
+            - pos: Vector
+            - vel: Vector
+        """
         self.mass = mass
         self.pos = pos
         self.vel = vel
