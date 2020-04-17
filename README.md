@@ -4,8 +4,10 @@ An attempt at making a 3D universe simulator
 ## Plan
 Start by making newton mechanics with time step movement in python with points and no graphics
 ###Future:
-	- Leapfrog Integration
-	- Relativity
-	- Differently shaped objects
-	- Collisions
-	- Newtons law of restitution
+<li>
+	<ul>Leapfrog Integration</ul>
+	<ul>Relativity</ul>
+	<ul>Differently shaped objects</ul>
+	<ul>Collisions</ul>
+	<ul>Newtons law of restitution</ul>
+</li>
