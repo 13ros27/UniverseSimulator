@@ -79,37 +79,53 @@ class Space:
         """Lock all objects in this space."""
         self.lock_objects = self.objects()
 
-    def step(self):
+    def step(self, timestep=TIMESTEP):
         """Step all objects in this space while locking their positions."""
         self.lock()
         for obj in self.lock_objects:
-            obj.step()
+            obj.step(timestep=timestep)
         self.unlock()
 
 
 class Point:
     """A point in space with mass."""
 
-    def __init__(self, mass, pos, vel):
+    def __init__(self, mass, pos, vel, space):
         """
         Create the point with its initial attributes.
 
-            - mass: int
-            - pos: Vector
-            - vel: Vector
+            - mass:  int (kg)
+            - pos:   Vector (m)
+            - vel:   Vector (m)
+            - space: Space
         """
         self.mass = mass
         self.pos = pos
         self.vel = vel
+        self.space = space
+        space.add(self)
+        self.acc = Vector(0, 0, 0)
 
     def __repr__(self):
         """Return information about the point."""
-        return f'Point(mass={self.mass}, pos={self.pos}, vel={self.vel})'
+        return (f'Point(mass={self.mass}, pos={self.pos}, vel={self.vel},'
+                'acc={self.acc})')
 
     def step_pos(self, timestep=TIMESTEP):
         """Step the position forward according to the points velocity."""
-        self.pos = self.pos + self.vel*TIMESTEP
+        self.pos = self.pos + self.vel*timestep
+
+    def step_vel(self, timestep=TIMESTEP):
+        """Step the velocity forward according to the points acceleration."""
+        self.vel = self.vel + self.acc*timestep
+
+    def update(self):
+        """Update the acceleration according to the objects around it."""
+        objects = self.space.objects(cur_obj=self)
+        
 
     def step(self, timestep=TIMESTEP):
         """Step the point forward one timestep."""
+        self.update()
+        self.step_vel(timestep=timestep)
         self.step_pos(timestep=timestep)
