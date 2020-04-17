@@ -33,6 +33,49 @@ class Vector:
         return self
 
 
+class Space:
+    """Space for any item to exist in."""
+
+    def __init__(self):
+        """Create a blank list of objects."""
+        self.objects = []
+        self.lock_objects = None
+
+    def add(self, object):
+        """Add an object to the space."""
+        self.objects.append(object)
+        self.lock_objects = None
+
+    def _objects(self):
+        objects = []
+        for obj in self.objects:
+            objects.append({'mass': obj.mass, 'pos': obj.pos})
+        return objects
+
+    def objects(self, cur_obj=None):
+        """Return the mass and position of all objects except the given one."""
+        if self.lock_objects is not None:
+            objects = self.lock_objects
+        else:
+            objects = self._objects()
+        ret = []
+        for obj in objects:
+            if obj != cur_obj:
+                ret.append(obj)
+        return ret
+
+    def update(self):
+        """Update what space returns for the objects stored in it."""
+        self.lock_objects = None
+
+    def step(self):
+        """Step all objects in this space while locking their positions."""
+        self.lock_objects = self.objects()
+        for obj in self.lock_objects:
+            obj.step()
+        self.update()
+
+
 class Point:
     """A point in space with mass."""
 
