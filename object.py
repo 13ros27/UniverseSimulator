@@ -20,6 +20,7 @@ class Vector:
         self.x += other.x
         self.y += other.y
         self.z += other.z
+        return self
 
     def __mul__(self, other):
         """Multiply a vector by a number."""
@@ -29,6 +30,7 @@ class Vector:
             self.z *= other
         else:
             raise TypeError('Can only multiply a vector by a number')
+        return self
 
 
 class Point:
