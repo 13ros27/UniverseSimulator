@@ -5,6 +5,7 @@ from copy import deepcopy
 # Constants
 TIMESTEP = 0.0001
 G = 0.00000000006743
+c = 299792458
 
 
 class Vector:
@@ -57,6 +58,21 @@ class Vector:
     def dist(self, other):
         """Distance between this vector and another."""
         return math.sqrt(((self-other)**2).sum)
+
+
+class UnitVector(Vector):
+    """A 3-dimensional vector with a length of one."""
+
+    def __init__(self, x, y, z):
+        """Create the vector with x, y and z."""
+        length = math.sqrt(x*x + y*y + z*z)
+        self.x = x/length
+        self.y = y/length
+        self.z = z/length
+
+    def __repr__(self):
+        """Return the vector in a neat form for outputting."""
+        return f'UnitVector({self.x}, {self.y}, {self.z})'
 
 
 class Space:
@@ -158,18 +174,19 @@ class Point:
 class Photon(Point):
     """A point with 0 mass."""
 
-    def __init__(self, pos, vel, space):
+    def __init__(self, pos, direction, space):
         """
         Create the point with its initial attributes.
 
             - mass:  int (kg)
             - pos:   Vector (m)
-            - vel:   Vector (m)
+            - direction:   UnitVector
             - space: Space
         """
         self.mass = 0
         self.pos = pos
-        self.vel = vel
+        self.direction = direction
+        self.vel = self.direction*c
         self.space = space
         space.add(self)
 
@@ -184,7 +201,7 @@ class Photon(Point):
 
 s = Space()
 bh = Point(float('Inf'), Vector(0, 0, 0), Vector(0, 0, 0), s)
-photon = Photon(Vector(5000, 5000, 5000), Vector(30000000, 0, 0), s)
+photon = Photon(Vector(5000, 5000, 5000), UnitVector(1, 0, 0), s)
 for i in range(1000):
     s.step()
 print(bh)
