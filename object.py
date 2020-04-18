@@ -103,9 +103,7 @@ class Space:
     def unlock(self):
         """Unlocks all objects in this space."""
         for i in range(len(self.objs)):
-            self.objs[i].mass = self.new_objects[i].mass
-            self.objs[i].pos = self.new_objects[i].pos
-            self.objs[i].vel = self.new_objects[i].vel
+            self.objs[i].copy(self.new_objects[i])
 
     def lock(self):
         """Lock all objects in this space."""
@@ -129,7 +127,7 @@ class Point:
         """
         Create the point with its initial attributes.
 
-            - mass:  int (kg)
+            - mass:  float (kg)
             - pos:   Vector (m)
             - vel:   Vector (m)
             - space: Space
@@ -144,6 +142,11 @@ class Point:
     def __repr__(self):
         """Return information about the point."""
         return f'Point(mass={self.mass}, pos={self.pos}, vel={self.vel})'
+
+    def copy(self, other):
+        """Copy the important attributes from another point."""
+        self.pos = other.pos
+        self.vel = other.vel
 
     def step_pos(self, timestep=TIMESTEP):
         """Step the position forward according to the points velocity."""
@@ -176,12 +179,11 @@ class Photon(Point):
 
     def __init__(self, pos, direction, space):
         """
-        Create the point with its initial attributes.
+        Create the photon with its initial attributes.
 
-            - mass:  int (kg)
-            - pos:   Vector (m)
-            - direction:   UnitVector
-            - space: Space
+            - pos:       Vector (m)
+            - direction: UnitVector
+            - space:     Space
         """
         self.mass = 0
         self.pos = pos
@@ -194,9 +196,33 @@ class Photon(Point):
         """Return information about the point."""
         return f'Photon(mass={self.mass}, pos={self.pos}, vel={self.vel})'
 
+    def copy(self, other):
+        """Copy the important attributes from another photon."""
+        self.pos = other.pos
+
     def step(self, timestep=TIMESTEP):
         """Step the point forward one timestep."""
         self.step_pos(timestep=timestep)
+
+
+class Body(Point):
+    """A spherical body with a collision hitbox."""
+
+    def __init__(self, mass, radius, pos, vel, space):
+        """
+        Create the body with its initial attributes.
+
+            - mass:   float (kg)
+            - radius: float (m)
+            - pos:    Vector (m)
+            - vel:    Vector (m)
+            - space:  Space
+        """
+        self.mass = mass
+        self.radius = radius
+        self.pos = pos
+        self.vel = vel
+        self.space = space
 
 
 s = Space()
